@@ -1,0 +1,24 @@
+# Eclipse specific entries
+.classpath
+.project
+.settings
+.checkstyle
+test-output
+
+# Intelij entries
+*.ipr
+*.iml
+*.iws
+.idea/
+
+# Maven specific entries
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# mac os x
+.DS_Store
+

@@ -1,16 +1,17 @@
 package com.zuora.sdk.samples;
 
+import com.zuora.sdk.lib.ZClient;
 import org.junit.Test;
 
-import com.zuora.sdk.lib.ZClient;
-
-public class AccountManagerTest {
+public class AccountManagerTest extends BaseZuoraApiTest {
    static final String SAMPLE_ACCOUNT_KEY = "A00001069";
-   
+
+
+
    @Test
    public void test_account_manager(){
       // Create a z_client
-      ZClient zClient = new ZClient();
+      ZClient zClient = new ZClient(getConfiguration());
 
       // create an account resource manager
       AccountManager accountManager = new AccountManager(zClient);

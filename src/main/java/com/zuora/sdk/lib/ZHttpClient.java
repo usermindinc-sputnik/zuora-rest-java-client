@@ -3,12 +3,8 @@
  */
 package com.zuora.sdk.lib;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.concurrent.TimeUnit;
+import com.usermind.integrations.common.boot.CommonLib;
+import com.usermind.integrations.common.config.Configuration;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
@@ -23,21 +19,34 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
+import org.slf4j.Logger;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
 
 
 public class ZHttpClient {
 
+  private final Logger logger = CommonLib.get().getLoggerFactory().getLogger(getClass());
+
   private static DefaultHttpClient instance_;
+  private Configuration configuration;
 
   // Each thread has its own httpclient
-  ZHttpClient() {
+  ZHttpClient(Configuration configuration) {
+    this.configuration = configuration;
+
     // Use DefaultClient for verfiy_peer client
-    if (Boolean.valueOf(((String)ZConfig.getInstance().getVal("ssl.verify.peer")).toLowerCase())) {
+    if (configuration.getBoolean("ssl.verify.peer")) {
       PoolingClientConnectionManager pccm = new PoolingClientConnectionManager();
-      
+
       // set max connections
-      pccm.setMaxTotal(Integer.parseInt((String)ZConfig.getInstance().getVal("http.max.connection.pool.size")));
-      pccm.setDefaultMaxPerRoute(Integer.parseInt((String)ZConfig.getInstance().getVal("http.max.connection.pool.size")));
+      pccm.setMaxTotal(configuration.getInt("http.max.connection.pool.size"));
+      pccm.setDefaultMaxPerRoute(configuration.getInt("http.max.connection.pool.size"));
       pccm.closeIdleConnections(15, TimeUnit.SECONDS);
       instance_ = new DefaultHttpClient(pccm);
     } else {
@@ -47,9 +56,9 @@ public class ZHttpClient {
   }
 
   // ZHttpClient is a singleton shared by all ZClients
-  public synchronized static DefaultHttpClient getInstance() {
+  public synchronized static DefaultHttpClient getInstance(Configuration configuration) {
     if (instance_ == null) {
-      new ZHttpClient();
+      new ZHttpClient(configuration);
     }
     return instance_;
   }
@@ -60,7 +69,9 @@ public class ZHttpClient {
       SchemeRegistry registry = new SchemeRegistry();
       // say yes to any cert
       SSLSocketFactory socketFactory = new SSLSocketFactory(new TrustStrategy() {
-        public boolean isTrusted(final X509Certificate[] chain, String authType) throws CertificateException {
+        @Override
+        public boolean isTrusted(final X509Certificate[] chain, String authType)
+            throws CertificateException {
           return true;
         }
       }, org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
@@ -71,8 +82,8 @@ public class ZHttpClient {
       PoolingClientConnectionManager pccm = new PoolingClientConnectionManager(registry);
 
       // configure limits
-      pccm.setMaxTotal(Integer.parseInt((String)ZConfig.getInstance().getVal("http.max.connection.pool.size")));
-      pccm.setDefaultMaxPerRoute(Integer.parseInt((String)ZConfig.getInstance().getVal("http.max.connection.pool.size")));
+      pccm.setMaxTotal(configuration.getInt("http.max.connection.pool.size"));
+      pccm.setDefaultMaxPerRoute(configuration.getInt("http.max.connection.pool.size"));
 
       // shut down connection after being idle for a minute
       pccm.closeIdleConnections(60, TimeUnit.SECONDS);
@@ -80,10 +91,8 @@ public class ZHttpClient {
       instance_ = new DefaultHttpClient(pccm);
       return instance_;
     } catch (GeneralSecurityException e) {
-      ZLogger.getInstance().log(e.getMessage(), ZConstants.LOG_BOTH);
-      ZLogger.getInstance().log(ZUtils.stackTraceToString(e), ZConstants.LOG_BOTH);
       String errorMessage = "Fatal Error in creating friendlyHTTPClient";
-      ZLogger.getInstance().log(errorMessage, ZConstants.LOG_BOTH);
+      logger.error(errorMessage, e);
       throw new RuntimeException(errorMessage);
     }
   }
@@ -93,12 +102,14 @@ public class ZHttpClient {
     instance_.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
     // set timeout parameters
-    instance_.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, Integer.parseInt((String)ZConfig.getInstance().getVal("http.connect.timeout")));
-    instance_.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, Integer.parseInt((String)ZConfig.getInstance().getVal("http.receive.timeout")));
+    instance_.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
+        configuration.getInt("http.connect.timeout"));
+    instance_.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,
+        configuration.getInt("http.receive.timeout"));
 
     // get settings for proxy
-    boolean proxyUsed = Boolean.valueOf(((String)ZConfig.getInstance().getVal("proxy.used")).toLowerCase());
-    String urlString = (String)ZConfig.getInstance().getVal("proxy.url");
+    boolean proxyUsed = configuration.getBoolean("proxy.used");
+    String urlString = configuration.getString("proxy.url");
 
     // if proxy is used and proxy url is specified ...
     if (proxyUsed && urlString != null && !urlString.equals("")) {
@@ -110,29 +121,31 @@ public class ZHttpClient {
         int proxyPort = url.getPort();
 
         // add authenticating proxy support if in use
-        if (Boolean.valueOf(((String)ZConfig.getInstance().getVal("proxy.auth")).toLowerCase())) {
+        if (configuration.getBoolean("proxy.auth")) {
           instance_.getCredentialsProvider().setCredentials(
-            new AuthScope(proxyHost, proxyPort),
-            new UsernamePasswordCredentials((String)ZConfig.getInstance().getVal("proxy.user"),
-            (String)ZConfig.getInstance().getVal("proxy.password")));
+              new AuthScope(proxyHost, proxyPort),
+              new UsernamePasswordCredentials(configuration.getString("proxy.user"),
+                  configuration.getString("proxy.password")));
         }
 
         // set proxy
         HttpHost proxy = new HttpHost(proxyHost, proxyPort, proxyProtocol);
         instance_.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
-      // proxy url is malformed ... giving up
+        // proxy url is malformed ... giving up
       } catch (MalformedURLException e) {
-        ZLogger.getInstance().log("Proxy URL string " + urlString + " is malformed.", ZConstants.LOG_BOTH);
-        ZLogger.getInstance().log("Unable to use Proxy. Proxy config is not used.", ZConstants.LOG_BOTH);
+        logger.warn(
+            "Unable to use Proxy - proxy URL string {} is malformed. Proxy config is not used.",
+            urlString);
       }
     }
     // add Useragent
     instance_.getParams().setParameter(CoreProtocolPNames.USER_AGENT,
-      (String)ZConfig.getInstance().getVal("http.user.agent"));
+        configuration.getString("http.user.agent"));
   }
 
   // Clean up all TCP connections before being collected
+  @Override
   public void finalize() {
     try {
       super.finalize();

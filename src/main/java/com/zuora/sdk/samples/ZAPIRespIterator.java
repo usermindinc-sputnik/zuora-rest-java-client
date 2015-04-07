@@ -1,7 +1,7 @@
 package com.zuora.sdk.samples;
 
 import com.zuora.sdk.lib.ZAPIResp;
-import com.zuora.sdk.lib.ZClient;
+
 import java.util.Iterator;
 
 public class ZAPIRespIterator {

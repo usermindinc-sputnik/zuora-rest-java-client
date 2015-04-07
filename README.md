@@ -2,7 +2,7 @@ Pre-requisites
 
     The following libraries are required to be downloaded:
 
-    java 6
+    java 8
     apache httpclient 4.2.3
     apache httpcore 4.2.2
     apache httpmime 4.2.3

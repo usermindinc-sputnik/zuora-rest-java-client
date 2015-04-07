@@ -1,16 +1,15 @@
 package com.zuora.sdk.samples;
 
-import org.junit.Test;
-
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
+import org.junit.Test;
 
-public class PaymentMethodManagerTest {
+public class PaymentMethodManagerTest extends BaseZuoraApiTest {
    static final String SAMPLE_ACCOUNT_KEY = "A00001069";
    @Test
    public void test_payment_method(){
       // create a z_client
-      ZClient zClient = new ZClient();
+      ZClient zClient = new ZClient(getConfiguration());
 
       // Create a payment method resource manager with a z_client
       PaymentMethodManager paymentMethodManager = new PaymentMethodManager(zClient);

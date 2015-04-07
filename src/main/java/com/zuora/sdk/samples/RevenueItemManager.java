@@ -1,10 +1,10 @@
 package com.zuora.sdk.samples;
 
-import java.net.URLEncoder;
-
 import com.zuora.sdk.lib.ZAPIArgs;
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
+
+import java.net.URLEncoder;
 
 public class RevenueItemManager {
    private ZClient zClient;

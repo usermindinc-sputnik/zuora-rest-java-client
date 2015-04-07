@@ -5,14 +5,21 @@
  */
 package com.zuora.sdk.samples;
 
+import com.usermind.integrations.common.config.Configuration;
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
 
 public class MultithreadedExecution implements Runnable {
+  private Configuration configuration;
 
+  public MultithreadedExecution(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
   public void run() {
     // Create a z_client
-    ZClient zClient = new ZClient();
+    ZClient zClient = new ZClient(configuration);
 
     // Create a Catalog resource object with a zclient
     CatalogManager catalogManager = new CatalogManager(zClient);
@@ -26,7 +33,7 @@ public class MultithreadedExecution implements Runnable {
 
     // follow nextPage if present
     while (resp != null) {
-      String nextPageLink = (String)resp.get("nextPage");
+      String nextPageLink = (String) resp.get("nextPage");
       if (nextPageLink == null) {
         resp = null;
       } else {
@@ -36,5 +43,3 @@ public class MultithreadedExecution implements Runnable {
   }
 
 }
-
-

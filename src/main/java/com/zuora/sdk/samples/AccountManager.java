@@ -1,17 +1,16 @@
 /**
  * Copyright (c) 2013 Zuora Inc.
- * 
+ *
  * Sample code to demonstrate how to use the Accounts resources
  */
 
 package com.zuora.sdk.samples;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import com.zuora.sdk.lib.ZAPIArgs;
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
+
+import java.net.URLEncoder;
 
 public class AccountManager {
   static final String SAMPLE_ACCOUNT_KEY = "A00001069";
@@ -31,7 +30,7 @@ public class AccountManager {
       e.printStackTrace();
       return;
     }
-    
+
     ZAPIArgs args = new ZAPIArgs();
     args.set("uri", ResourceEndpoints.GET_ACCOUNT_SUMMARY.replace("{account-key}", this.accountKey));
 
@@ -56,7 +55,7 @@ public class AccountManager {
 	  e.printStackTrace();
 	  return;
 	}
-	
+
 	ZAPIArgs args = new ZAPIArgs();
     args.set("uri", ResourceEndpoints.GET_ACCOUNT_DETAIL.replace("{account-key}", this.accountKey));
 
@@ -114,7 +113,7 @@ public class AccountManager {
     args.getArg("reqBody").getArg("creditCard").set("expirationMonth", 2);
     args.getArg("reqBody").getArg("creditCard").set("expirationYear", 2014);
     args.getArg("reqBody").getArg("creditCard").set("securityCode", "111");
-    
+
     System.out.println( "========== CREATE AN ACCOUNT ============");
 
     try {
@@ -140,7 +139,7 @@ public class AccountManager {
 	  e.printStackTrace();
 	  return;
 	}
-	
+
     ZAPIArgs args = new ZAPIArgs();
     args.set("uri", ResourceEndpoints.PUT_ACCOUNT.replace("{account-key}", this.accountKey));
 

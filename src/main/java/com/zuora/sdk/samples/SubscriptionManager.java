@@ -6,11 +6,11 @@
 
 package com.zuora.sdk.samples;
 
-import java.net.URLEncoder;
-
 import com.zuora.sdk.lib.ZAPIArgs;
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
+
+import java.net.URLEncoder;
 
 public class SubscriptionManager {
   static final String SAMPLE_ACCOUNT_KEY = "A00001069";

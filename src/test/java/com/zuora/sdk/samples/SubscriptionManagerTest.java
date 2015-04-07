@@ -1,17 +1,16 @@
 package com.zuora.sdk.samples;
 
-import org.junit.Test;
-
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
+import org.junit.Test;
 
-public class SubscriptionManagerTest {
+public class SubscriptionManagerTest extends BaseZuoraApiTest {
    static final String SAMPLE_ACCOUNT_KEY = "A00001069";
-   
+
    @Test
    public void test_subscription(){
    // create a Z_Client
-      ZClient zClient = new ZClient();
+      ZClient zClient = new ZClient(getConfiguration());
 
       // Create a z_client object and pass it to APIRepo
       SubscriptionManager subscriptionManager = new SubscriptionManager(zClient);

@@ -6,14 +6,15 @@
 
 package com.zuora.sdk.samples;
 
+import com.usermind.integrations.common.boot.CommonLib;
 import com.zuora.sdk.lib.ZAPIArgs;
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
-import com.zuora.sdk.lib.ZConstants;
-import com.zuora.sdk.lib.ZLogger;
-import com.zuora.sdk.lib.ZUtils;
+import org.slf4j.Logger;
 
 public class ConnectionManager {
+
+  private final Logger logger = CommonLib.get().getLoggerFactory().getLogger(getClass());
   ZClient zClient;
 
   public boolean isConnected(ZClient zClient, String apiAccessKeyId, String apiSecretAccessKey) {
@@ -25,23 +26,21 @@ public class ConnectionManager {
     args.getArg("headers").set("apiAccessKeyId", apiAccessKeyId);
     args.getArg("headers").set("apiSecretAccessKey", apiSecretAccessKey);
 
-    System.out.println("========== CONNECT SERVICE ENDPOINT ============");
+    logger.debug("========== CONNECT SERVICE ENDPOINT ============");
 
     ZAPIResp response = null;
     try {
       response = zClient.post(args);
-      System.out.println(response.toJSONString());
+      logger.info(response.toJSONString());
       if ((Integer)response.get("httpStatusCode") == 200 && (Boolean)response.get("success")) {
         return true;
       }
     } catch (IllegalArgumentException e) {
-      System.out.println(e.getMessage());
-      ZLogger.getInstance().log(ZUtils.stackTraceToString(e), ZConstants.LOG_BOTH);
+      logger.error(e.getMessage(), e);
     } catch (RuntimeException e) {
-      System.out.println(e.getMessage());
-      ZLogger.getInstance().log(ZUtils.stackTraceToString(e), ZConstants.LOG_BOTH);
+      logger.error(e.getMessage(), e);
     }
-    
+
     return false;
   }
 

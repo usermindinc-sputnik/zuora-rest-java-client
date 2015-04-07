@@ -1,19 +1,18 @@
 package com.zuora.sdk.samples;
 
-import java.net.URLEncoder;
-import java.util.Map;
-
 import com.zuora.sdk.lib.ZAPIArgs;
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
 
+import java.net.URLEncoder;
+
 public class RevenueEventManager {
    private ZClient zClient;
-   
+
    public RevenueEventManager(ZClient zClient){
       this.zClient = zClient;
    }
-   
+
    // GET REVENUE EVENT DETAIL
    public void getDetailByNumber(String rsNumber) {
      try {
@@ -23,7 +22,7 @@ public class RevenueEventManager {
        e.printStackTrace();
        return;
      }
-     
+
      ZAPIArgs args = new ZAPIArgs();
      args.set("uri", ResourceEndpoints.GET_REVENUE_EVENTS_DETAIL.replace("{event-number}", rsNumber));
 
@@ -38,7 +37,7 @@ public class RevenueEventManager {
        System.out.println(e.getMessage());
      }
    }
-   
+
    // GET REVENUE EVENTs
    public void getEventsByRevenueSchedule(String rsNumber) {
      try {
@@ -48,7 +47,7 @@ public class RevenueEventManager {
        e.printStackTrace();
        return;
      }
-     
+
      ZAPIArgs args = new ZAPIArgs();
      args.set("uri", ResourceEndpoints.GET_REVENUE_EVENTS_BY_REVENUE_SCHEDULE.replace("{rs-number}", rsNumber));
 

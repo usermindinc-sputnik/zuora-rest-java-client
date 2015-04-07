@@ -3,9 +3,10 @@
  */
 package com.zuora.sdk.lib;
 
-import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONString;
+
+import java.util.Iterator;
 
 public final class ZAPIArgs implements JSONString {
 
@@ -22,14 +23,14 @@ public final class ZAPIArgs implements JSONString {
       }
       if (!isValidValue(value)) {
         throw new RuntimeException("Don't support this kind of value:"
-          + value);
+            + value);
       }
       object.setValue(propertyName, value);
     } catch (JSONException e) {
       throw new RuntimeException(e);
     }
   }
-  
+
   public void setArray(String propertyName) {
     object.initPropertyAsArray(propertyName);
   }
@@ -55,15 +56,17 @@ public final class ZAPIArgs implements JSONString {
     return object.isValidValue(value);
   }
 
+  @Override
   public String toJSONString() {
     return object.toJSONString();
   }
 
+  @Override
   public String toString() {
     return object.toString();
   }
 
-  public Iterator keys() {
+  public Iterator<?> keys() {
     return object.keys();
   }
 }

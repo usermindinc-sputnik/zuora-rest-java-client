@@ -3,15 +3,15 @@
  */
 package com.zuora.sdk.lib;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Iterator;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONString;
 import org.json.JSONTokener;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Iterator;
 
 class ZAPIObject implements JSONString {
 

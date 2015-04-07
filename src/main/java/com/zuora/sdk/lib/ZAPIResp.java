@@ -3,9 +3,10 @@
  */
 package com.zuora.sdk.lib;
 
-import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONTokener;
+
+import java.util.Iterator;
 
 public final class ZAPIResp {
 

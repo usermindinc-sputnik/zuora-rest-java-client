@@ -1,19 +1,18 @@
 package com.zuora.sdk.samples;
 
-import java.net.URLEncoder;
-import java.util.Map;
-
 import com.zuora.sdk.lib.ZAPIArgs;
 import com.zuora.sdk.lib.ZAPIResp;
 import com.zuora.sdk.lib.ZClient;
 
+import java.net.URLEncoder;
+
 public class RevenueRecognitionRuleManager {
    private ZClient zClient;
-   
+
    public RevenueRecognitionRuleManager(ZClient zClient){
       this.zClient = zClient;
    }
-   
+
    // GET RULE NAME BY SUBCRIPTION CHARGE
    public void getRuleNameBySubscriptionCharge(String chargeId) {
 	   System.out.println("charge_id"+chargeId);
@@ -24,7 +23,7 @@ public class RevenueRecognitionRuleManager {
        e.printStackTrace();
        return;
      }
-     
+
      ZAPIArgs args = new ZAPIArgs();
      args.set("uri", ResourceEndpoints.GET_REVENUE_RECOGNITION_RULE_BY_SUBSCRIPTION_CHARGE.replace("{charge-id}", chargeId));
 
