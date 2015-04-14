@@ -18,7 +18,7 @@
     <dependency>
       <groupId>com.usermind.integrations</groupId>
       <artifactId>integrations-common</artifactId>
-      <version>1.0.51-SNAPSHOT</version>
+      <version>1.0.55</version>
     </dependency>
 
     <dependency>
